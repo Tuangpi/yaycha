@@ -5,10 +5,12 @@ import { useQuery, useMutation } from "react-query";
 import { queryClient } from "../ThemedApp";
 import { useApp } from "../ThemedApp";
 import { useRef } from "react";
+import { getToken, postComment } from "../libs/fetcher";
 const api = import.meta.env.VITE_API;
 export default function Comments() {
   const contentInput = useRef();
   const { setGlobalMsg, auth } = useApp();
+  const token = getToken();
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -20,6 +22,10 @@ export default function Comments() {
   const removePost = useMutation(async (id) => {
     await fetch(`${api}/content/posts/${id}`, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
     navigate("/");
     setGlobalMsg("A post deleted");
@@ -29,6 +35,10 @@ export default function Comments() {
     async (id) => {
       await fetch(`${api}/content/comments/${id}`, {
         method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
       });
     },
     {
@@ -68,8 +78,10 @@ export default function Comments() {
 
   return (
     <Box>
-      <Item primary item={data} remove={removePost.mutate} />
-      {data?.comments?.map((comment) => {
+      <div style={{ backgroundColor: "red" }}>
+        <Item primary item={data} remove={removePost.mutate} />
+      </div>
+      {data.comments.map((comment) => {
         return (
           <Item
             comment

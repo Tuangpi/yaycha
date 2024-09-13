@@ -36,7 +36,7 @@ export async function fetchUser(id) {
     return res.json();
 }
 
-function getToken() {
+export function getToken() {
     return localStorage.getItem("token");
 }
 export async function fetchVerify() {
