@@ -1,14 +1,40 @@
 import { useApp } from "../ThemedApp";
-import { Box, AppBar, Toolbar, Typography, IconButton } from "@mui/material";
+import {
+  Box,
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Badge,
+} from "@mui/material";
 import {
   Menu as MenuIcon,
   Add as AddIcon,
   LightMode as LightModeIcon,
   DarkMode as DarkModeIcon,
+  Notifications as NotiIcon,
 } from "@mui/icons-material";
+import { useQuery } from "react-query";
+import { fetchNotis } from "../libs/fetcher";
+import { useNavigate } from "react-router-dom";
 export default function Header() {
-  const { showForm, setShowForm, mode, setMode, setShowDrawer, showDrawer } =
-    useApp();
+  const {
+    showForm,
+    setShowForm,
+    mode,
+    setMode,
+    setShowDrawer,
+    showDrawer,
+    auth,
+  } = useApp();
+  const navigate = useNavigate();
+  const { isLoading, isError, data } = useQuery(["notis", auth], fetchNotis);
+  function notiCount() {
+    if (!auth) return 0;
+    if (isLoading || isError) return 0;
+    return data.filter((noti) => !noti.read).length;
+  }
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -24,6 +50,13 @@ export default function Header() {
           <IconButton color="inherit" onClick={() => setShowForm(!showForm)}>
             <AddIcon />
           </IconButton>
+          {auth && (
+            <IconButton color="inherit" onClick={() => navigate("/notis")}>
+              <Badge color="error" badgeContent={notiCount()}>
+                <NotiIcon />
+              </Badge>
+            </IconButton>
+          )}
           {mode === "dark" ? (
             <IconButton
               color="inherit"

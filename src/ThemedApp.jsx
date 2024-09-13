@@ -11,6 +11,8 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { fetchVerify } from "./libs/fetcher";
+import Notis from "./pages/Notis";
+import AppSocket from "./AppSocket";
 const AppContext = createContext();
 export function useApp() {
   return useContext(AppContext);
@@ -44,6 +46,10 @@ const router = createBrowserRouter([
       {
         path: "/likes/:id",
         element: <Likes />,
+      },
+      {
+        path: "/notis",
+        element: <Notis />,
       },
     ],
   },
@@ -91,6 +97,7 @@ export default function ThemedApp() {
       >
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
+          <AppSocket />
         </QueryClientProvider>
         <CssBaseline />
       </AppContext.Provider>
